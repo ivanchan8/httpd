@@ -1,16 +1,23 @@
 #!/usr/bin/env bash
-# parse url
-[ -n "${1}" ] && url="${1}" || url="http://localhost/index.html"
+logmsg(){
+  printf "%s" "$@" >> client.log
+}
 
-protocol="${1}/^http[s]?\/\/\.*$/
+[ -z $2 ] && PORT=8080
 
-
-set -x
-[ -z $2 ] && PORT=8081 || PORT=${2}
 HOST=${1}
+
 [ -z "${1}" ] && HOST=localhost
+
 exec 3<> /dev/tcp/${HOST##*://}/${PORT}
-printf "GET /%s HTTP/1.1\r\n" index.html | tee -a client.log
-printf "%s Host: %s\r\n" "${HOST}" | tee -a client.log
-printf "\r\n" | tee -a client.log
+
+logmsg "GET /%s HTTP/1.1\r\n" index.html
+printf "GET /%s HTTP/1.1\r\n" index.html
+
+logmsg "%s Host: %s\r\n" "${HOST}" 
+printf "%s Host: %s\r\n" "${HOST}" 
+
+logmsg "\r\n"
+printf "\r\n"
+
 cat <&3
